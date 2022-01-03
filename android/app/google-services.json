@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "398455155094",
+    "firebase_url": "https://water-tank-automation-88582-default-rtdb.firebaseio.com",
+    "project_id": "water-tank-automation-88582",
+    "storage_bucket": "water-tank-automation-88582.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:398455155094:android:62af040b9b043e762d95b7",
+        "android_client_info": {
+          "package_name": "com.example.phone_auth_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "398455155094-nris1g83v5uo7eaepc8s1tvsmd8i1p4p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.phone_auth_firebase",
+            "certificate_hash": "0216f2542d0b447c7cb6c6668fe23f4ce99f7e73"
+          }
+        },
+        {
+          "client_id": "398455155094-1nnullgjeqbqejeqapoarbms6ss4l8gs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrjmvvo6_jt6CqDCP_PoaKWsgFPRCuglg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "398455155094-1nnullgjeqbqejeqapoarbms6ss4l8gs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
