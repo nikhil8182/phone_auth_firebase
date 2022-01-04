@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,82 +29,136 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController number = TextEditingController();
   TextEditingController codeController = TextEditingController();
 
-  Future<bool> loginUser(String phone, BuildContext context) async{
-
-    _auth.verifyPhoneNumber(
-        phoneNumber:"+91 $phone",
-        timeout: Duration(seconds: 60),
-        verificationCompleted: (PhoneAuthCredential credential) async{
-          Navigator.of(context).pop();
-
-          final result = await _auth.signInWithCredential(credential);
-
-          final user = result.user;
-
-          if(user != null){
-
-            Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => WelcomePage()
-                      ));
-          }else{
-            print("Error");
-          }
-
-          //This callback would gets called when verification is done auto maticlly
-        },
-        verificationFailed: (FirebaseAuthException exception){
-          print(exception);
-        },
-        codeSent: (String verificationId, int forceResendingToken){
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("Give the code?"),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextField(
-                        controller: codeController,
-                      ),
-                    ],
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text("Confirm"),
-                      textColor: Colors.white,
-                      color: Colors.blue,
-                      onPressed: () async{
-                        final code = codeController.text.trim();
-                        AuthCredential credential =  PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code);
-
-                        final result = await _auth.signInWithCredential(credential);
-
-                        final user = result.user;
-
-                        if(user != null){
-                          Navigator.push(context, MaterialPageRoute(
-                                                      builder: (context) => WelcomePage()
-                                                  ));
-                        }else{
-                          print("Error");
-                        }
-                      },
-                    )
-                  ],
-                );
-              }
-          );
-        },
-        codeAutoRetrievalTimeout: null
-    );
-  }
+  ///mobile login in firebase
+  // Future<bool> loginUser(String phone, BuildContext context) async{
+  //
+  //   _auth.verifyPhoneNumber(
+  //       phoneNumber:"+91 $phone",
+  //       timeout: Duration(seconds: 60),
+  //       verificationCompleted: (PhoneAuthCredential credential) async{
+  //         Navigator.of(context).pop();
+  //
+  //         final result = await _auth.signInWithCredential(credential);
+  //
+  //         final user = result.user;
+  //
+  //         if(user != null){
+  //
+  //           Navigator.push(context, MaterialPageRoute(
+  //                         builder: (context) => WelcomePage()
+  //                     ));
+  //         }else{
+  //           print("Error");
+  //         }
+  //
+  //         //This callback would gets called when verification is done auto maticlly
+  //       },
+  //       verificationFailed: (FirebaseAuthException exception){
+  //         print(exception);
+  //       },
+  //       codeSent: (String verificationId, int forceResendingToken){
+  //         showDialog(
+  //             context: context,
+  //             barrierDismissible: false,
+  //             builder: (context) {
+  //               return AlertDialog(
+  //                 title: Text("Give the code?"),
+  //                 content: Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: <Widget>[
+  //                     TextField(
+  //                       controller: codeController,
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 actions: <Widget>[
+  //                   FlatButton(
+  //                     child: Text("Confirm"),
+  //                     textColor: Colors.white,
+  //                     color: Colors.blue,
+  //                     onPressed: () async{
+  //                       final code = codeController.text.trim();
+  //                       AuthCredential credential =  PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code);
+  //
+  //                       final result = await _auth.signInWithCredential(credential);
+  //
+  //                       final user = result.user;
+  //
+  //                       if(user != null){
+  //                         Navigator.push(context, MaterialPageRoute(
+  //                                                     builder: (context) => WelcomePage()
+  //                                                 ));
+  //                       }else{
+  //                         print("Error");
+  //                       }
+  //                     },
+  //                   )
+  //                 ],
+  //               );
+  //             }
+  //         );
+  //       },
+  //       codeAutoRetrievalTimeout: null
+  //   );
+  // }
+  // Widget _numberSubmitButton() {
+  //   return Align(
+  //     alignment: Alignment.centerRight,
+  //     child: InkWell(
+  //       onTap: () async {
+  //         //createAlbum(name.text, email.text, pass.text);
+  //         //name.clear();
+  //         // email.clear();
+  //         // pass.clear();
+  //         loginUser(number.text, context);
+  //         // try {
+  //         //   final newUser = await _auth.createUserWithEmailAndPassword(
+  //         //       email: email.text, password: pass.text);
+  //         //   databaseReference.child(_auth.currentUser.uid).set({
+  //         //     'name': name.text,
+  //         //     'phone': number.text,
+  //         //     'email' : email.text,
+  //         //   });
+  //         //   if (newUser != null) {
+  //         //     Navigator.pop(context);
+  //         //   }
+  //         // } catch (e) {
+  //         //   print(e);
+  //         // }
+  //         //Navigator.pop(context);
+  //         // Navigator.push(
+  //         //     context, MaterialPageRoute(builder: (context) => SignUpPage()));
+  //       },
+  //       child:
+  //       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+  //         const Text(
+  //           'Verify Otp',
+  //           style: TextStyle(
+  //               color: Colors.white,
+  //               fontSize: 20,
+  //               fontWeight: FontWeight.w500,
+  //               height: 1.6),
+  //         ),
+  //         SizedBox.fromSize(
+  //           size: const Size.square(50.0), // button width and height
+  //           child: const ClipOval(
+  //             child: Material(
+  //               color: Color.fromRGBO(76, 81, 93, 1),
+  //               child: Icon(Icons.arrow_forward,
+  //                   color: Colors.white), // button color
+  //             ),
+  //           ),
+  //         ),
+  //       ]),
+  //     ),
+  //   );
+  // }
 
 Timer timer;
 
   @override
   void initState() {
+    //must***
     // timer = Timer.periodic(Duration(seconds: 5), (Timer t) {
     //   confirmation();
     // });
@@ -172,13 +227,14 @@ Timer timer;
   Widget _numberWidget() {
     return Stack(
       children: [
-
         TextFormField(
           controller: number,
           style: const TextStyle(color: Colors.white),
-          keyboardType: TextInputType.name,
+          keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.next,
           decoration: const InputDecoration(
+            prefixText: "+91- ",
+            prefixStyle: TextStyle(color: Colors.grey),
             // hintText: 'Enter your full name',
             labelText: 'Phone',
             labelStyle: TextStyle(
@@ -248,36 +304,63 @@ Timer timer;
     );
   }
 
+  ///sendVerification email
+  // confirmation() async {
+  //   final verifyUser = await _auth.currentUser;
+  //   if(verifyUser.emailVerified){
+  //     print("im inside the verify");
+  //     setState(() {
+  //       name.clear();
+  //       email.clear();
+  //       number.clear();
+  //       pass.clear();
+  //       Navigator.pop(context);
+  //     });
+  //   }else{
+  //     print("still outside");
+  //     verifyUser.reload();
+  //   }
+  // }
+  //
+  //
+  // verifyEmail() async {
+  //   final verifyUser = await _auth.currentUser;
+  //   print(verifyUser);
+  //   if(verifyUser != null)
+  //   {
+  //     await verifyUser.sendEmailVerification();
+  //     print("Verification Mail has been sent");
+  //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor:Colors.orangeAccent,content: Text("Verification Mail has been sent",style: TextStyle(color: Colors.green),)));
+  //     confirmation();
+  //   }else{
+  //     print("email is not verified");
+  //   }
+  //
+  // }
 
-  confirmation() async {
-    final verifyUser = await _auth.currentUser;
-    if(verifyUser.emailVerified){
-      print("im inside the verify");
-      setState(() {
-        Navigator.pop(context);
+  createEmailId() async {
+    try {
+      final newUser = await _auth.createUserWithEmailAndPassword(
+          email: email.text, password: pass.text);
+
+      databaseReference.child(_auth.currentUser.uid).set({
+        'name': name.text,
+        'phone': "+91 ${number.text}",
+        'email' : email.text,
       });
-    }else{
-      print("still outside");
-      verifyUser.reload();
-      confirmation();
+
+      if (newUser != null) {
+              name.clear();
+              email.clear();
+              number.clear();
+              pass.clear();
+        print("successfully registered");
+        Navigator.pop(context);
+      }
+
+    } catch (e) {
+      print(e);
     }
-  }
-
-
-
-  verifyEmail() async {
-
-    final verifyUser = await _auth.currentUser;
-    if(verifyUser != null)
-    {
-      await verifyUser.sendEmailVerification();
-      print("Verification Mail has been sent");
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor:Colors.orangeAccent,content: Text("Verification Mail has been sent",style: TextStyle(color: Colors.green),)));
-      confirmation();
-    }else{
-      print("email is not verified");
-    }
-
   }
 
 
@@ -287,31 +370,13 @@ Timer timer;
       child: InkWell(
         onTap: () async {
           //createAlbum(name.text, email.text, pass.text);
-          //name.clear();
+           //name.clear();
           // email.clear();
           // pass.clear();
           //loginUser(number.text, context);
-
-          try {
-            final newUser = await _auth.createUserWithEmailAndPassword(
-                email: email.text, password: pass.text);
-
-            if (newUser != null) {
-              // Navigator.pop(context);
-              print("successfully registered");
-              verifyEmail();
-
-            }
-
-            databaseReference.child(_auth.currentUser.uid).set({
-              'name': name.text,
-              'phone': number.text,
-              'email' : email.text,
-            });
-
-          } catch (e) {
-            print(e);
-          }
+          //final user = await _auth.
+          //verifyEmail();
+          createEmailId();
           //  Navigator.pop(context);
            //Navigator.push(
            // context, MaterialPageRoute(builder: (context) => SignUpPage()));
@@ -341,58 +406,7 @@ Timer timer;
     );
   }
 
-  Widget _numberSubmitButton() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: InkWell(
-        onTap: () async {
-          //createAlbum(name.text, email.text, pass.text);
-          //name.clear();
-          // email.clear();
-          // pass.clear();
-          loginUser(number.text, context);
-          // try {
-          //   final newUser = await _auth.createUserWithEmailAndPassword(
-          //       email: email.text, password: pass.text);
-          //   databaseReference.child(_auth.currentUser.uid).set({
-          //     'name': name.text,
-          //     'phone': number.text,
-          //     'email' : email.text,
-          //   });
-          //   if (newUser != null) {
-          //     Navigator.pop(context);
-          //   }
-          // } catch (e) {
-          //   print(e);
-          // }
-          //Navigator.pop(context);
-          // Navigator.push(
-          //     context, MaterialPageRoute(builder: (context) => SignUpPage()));
-        },
-        child:
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          const Text(
-            'Verify Otp',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                height: 1.6),
-          ),
-          SizedBox.fromSize(
-            size: const Size.square(50.0), // button width and height
-            child: const ClipOval(
-              child: Material(
-                color: Color.fromRGBO(76, 81, 93, 1),
-                child: Icon(Icons.arrow_forward,
-                    color: Colors.white), // button color
-              ),
-            ),
-          ),
-        ]),
-      ),
-    );
-  }
+
 
   // Widget _createLoginLabel() {
   //   return Container(
@@ -437,17 +451,13 @@ Timer timer;
                         SizedBox(height: height * .35),
                         _nameWidget(),
                         const SizedBox(height: 20),
+                        _numberWidget(),
+                        const SizedBox(height: 20),
                         _emailWidget(),
                         const SizedBox(height: 20),
                         _passwordWidget(),
                         const SizedBox(height: 30),
                         _submitButton(),
-                        const SizedBox(height: 20),
-                        const Text("Or",style: TextStyle(fontWeight: FontWeight.bold,),),
-                        const SizedBox(height: 10),
-                        _numberWidget(),
-                        const SizedBox(height: 20),
-                        _numberSubmitButton()
                       ],
                     ),
                   ),

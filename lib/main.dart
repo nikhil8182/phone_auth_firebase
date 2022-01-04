@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:phone_auth_firebase/src/signin.dart';
 
 
+
+//some features were added like fb,apple etc.
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

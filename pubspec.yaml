@@ -43,7 +43,11 @@ dependencies:
   qr_code_scanner: ^0.6.1
   proste_bezier_curve: ^2.0.2
   google_sign_in:
-
+  flutter_facebook_auth:
+  sign_in_with_apple:
+  crypto:
+  firebase_dynamic_links:
+  flutter_login_facebook:
 
 dev_dependencies:
   flutter_test:
