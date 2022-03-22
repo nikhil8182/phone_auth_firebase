@@ -5,6 +5,7 @@ import 'package:phone_auth_firebase/src/signin.dart';
 
 
 //some features were added like fb,apple etc.
+//ghhsfgh
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
